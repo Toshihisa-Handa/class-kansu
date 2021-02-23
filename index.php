@@ -1,70 +1,41 @@
 <?php
-session_start();
+include(__DIR__ . '/config.php');
+require_once(__DIR__ . '/func.php');
 
-//特殊文字対策
-function h($str)
-{
-    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
-}
+//db
+$pdo = dbcon();
 
-//CSRF対策============================
-function createToken()
-{
-  if (!isset($_SESSION['token'])) {
-    $_SESSION['token'] = bin2hex(random_bytes(32));
-  }
-}
 
-function validateToken()
-{
-  if (
-    empty($_SESSION['token']) ||
-    $_SESSION['token'] !== filter_input(INPUT_POST, 'token')
-  ) {
-    exit('Invalid post request');
-  }
-}
-//=====================================
 
 //トークン生成
 createToken();
 
-//db接続
-try {
-    $pdo = new PDO('mysql:host=localhost;dbname=dot_todos', 'root', 'root');
-} catch (PDOException $e) {
-    print "エラー：" . $e->getMessage() . "<br/>";
-    exit();
-}
 
-//登録処理
-function addTodo($pdo)
-{
-  $title = trim(filter_input(INPUT_POST, 'title'));
-  if ($title === '') {
-    return;
-  }
-  $stmt = $pdo->prepare("INSERT INTO todos (title) VALUES (:title)");
-  $stmt->bindValue('title', $title, PDO::PARAM_STR);
-  $stmt->execute();
-}
 
-//表示処理
-function getResults($pdo)
-{
-    $sql = "SELECT * FROM todos ORDER BY id DESC";
-    $stmt = $pdo->query($sql);
-    $results = $stmt->fetchAll();
-    return $results;
-}
+
 
 //登録の実行（ポストがあった際実行される）
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    validateToken();
-    addTodo($pdo);
-    header('Location: index.php');
-    exit;
+  validateToken();
+  $action = filter_input(INPUT_GET, 'action');
+
+  switch ($action) {
+    case 'add':
+      addTodo($pdo);
+      break;
+    case 'toggle':
+      toggleTodo($pdo);
+      break;
+      case 'delete':
+        deleteTodo($pdo);
+      break;
+      default:
+      exit;
   }
+
+  header('Location: index.php');
+  exit;
+}
 
 //表示の実行
 $results = getResults($pdo);
@@ -76,35 +47,86 @@ $results = getResults($pdo);
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    li {
+      display: flex;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: #ccc;
+    }
+
+    .delete {
+      color: #ccc;
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
-    <h1>php練習</h1>
+  <h1>php練習</h1>
 
-    <form action="" method="post">
-        <input type="text" name="title" placeholder="Type new todo.">
-        <input type="hidden" name='token' value='<?=h($_SESSION['token']) ?>'>
+  <form action="?action=add" method="post">
+    <input type="text" name="title" placeholder="Type new todo.">
+    <input type="hidden" name='token' value='<?= h($_SESSION['token']) ?>'>
 
-    </form>
-    <ul>
-        <?php foreach ($results as $result) : ?>
-            <li>
-                <input type="checkbox" <?= $result['is_done']  ? 'checked' : ''; ?>>
-                <span>
-                    <?= $result['title']; ?>
-                </span>
-            </li>
-        <?php endforeach; ?>
-    </ul>
+  </form>
+  <ul>
+    <?php foreach ($results as $result) : ?>
+      <li>
+        <form action="?action=toggle" method='post'>
+          <input type="checkbox" <?= $result['is_done']  ? 'checked' : ''; ?>>
+          <input type="hidden" name="id" value="<?= h($result['id']); ?>">
+          <input type="hidden" name="token" value="<?= h($_SESSION['token']); ?>">
+        </form>
+        <span>
+          <span class="<?= $result['is_done'] ? 'done' : ''; ?>">
+            <?= $result['title']; ?>
+          </span>
+
+          <form action="?action=delete" method="post">
+            <span class="delete">x</span>
+            <input type="hidden" name="id" value="<?= h($result['id']); ?>">
+            <input type="hidden" name="token" value="<?= h($_SESSION['token']); ?>">
+          </form>
+
+
+
+      </li>
+    <?php endforeach; ?>
+  </ul>
 
 
 
 
 
 
+  <script>
+    {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          checkbox.parentNode.submit();
+        });
+      });
+    }
 
+
+  const deletes = document.querySelectorAll('.delete');
+  deletes.forEach(span => {
+    span.addEventListener('click', () => {
+      if(!confirm('本当に消す？')){
+        return;
+      }
+      span.parentNode.submit();
+    });
+  });
+
+  </script>
+</body>
 
 </html>
