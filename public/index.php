@@ -1,6 +1,6 @@
 <?php
-include(__DIR__ . '/config.php');
-require_once(__DIR__ . '/func.php');
+include(__DIR__ . '/../app/config.php');
+require_once(__DIR__ . '/../app/func.php');
 
 //db
 $pdo = dbcon();
