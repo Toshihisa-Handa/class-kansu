@@ -1,6 +1,11 @@
 <?php
 include(__DIR__ . '/../app/config.php');
 
+use MyApp\Database;
+use MyApp\Todo;
+use MyApp\Utils;
+
+
 //db
 $pdo = Database::dbcon();
 

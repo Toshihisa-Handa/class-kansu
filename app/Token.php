@@ -1,6 +1,5 @@
-class Token 
-<?php
-
+<?php  
+namespace MyApp;
 
 class Token
 {

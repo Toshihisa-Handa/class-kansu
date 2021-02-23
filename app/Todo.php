@@ -1,5 +1,7 @@
 <?php
 
+namespace MyApp;
+
 class Todo
 {
     private $pdo;
@@ -50,7 +52,7 @@ class Todo
             return;
         }
         $stmt = $this->pdo->prepare("INSERT INTO todos (title) VALUES (:title)");
-        $stmt->bindValue('title', Utils::h($title), PDO::PARAM_STR);
+        $stmt->bindValue('title', Utils::h($title), \PDO::PARAM_STR);
         $stmt->execute();
     }
 
@@ -61,7 +63,7 @@ class Todo
             return;
         }
         $stmt = $this->pdo->prepare("UPDATE todos SET is_done = NOT is_done  WHERE id = :id");
-        $stmt->bindvalue('id', $id, PDO::PARAM_INT);
+        $stmt->bindvalue('id', $id, \PDO::PARAM_INT);
         $stmt->execute();
     }
 
@@ -72,7 +74,7 @@ class Todo
             return;
         }
         $stmt = $this->pdo->prepare("DELETE FROM todos WHERE id =:id");
-        $stmt->bindvalue('id', $id, PDO::PARAM_INT);
+        $stmt->bindvalue('id', $id, \PDO::PARAM_INT);
         $stmt->execute();
     }
 

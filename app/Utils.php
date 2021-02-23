@@ -1,4 +1,6 @@
 <?php 
+namespace Myapp;
+
 
 class Utils 
 {
