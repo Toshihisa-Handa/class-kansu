@@ -33,6 +33,10 @@ class Todo
                 case 'delete':
                     $this->delete();
                     break;
+                case 'deleteAll':
+                    $this->deleteAll();
+                    break;
+
                 default:
                     exit;
             }
@@ -76,6 +80,12 @@ class Todo
         $stmt = $this->pdo->prepare("DELETE FROM todos WHERE id =:id");
         $stmt->bindvalue('id', $id, \PDO::PARAM_INT);
         $stmt->execute();
+    }
+
+    private function deleteAll()
+    {
+
+        $stmt = $this->pdo->query("DELETE FROM todos WHERE is_done = 1");
     }
 
 

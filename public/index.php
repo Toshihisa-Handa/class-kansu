@@ -13,7 +13,7 @@ $pdo = Database::dbcon();
 
 $todo = new  Todo($pdo);
 $todo->processPost();
-$results = $todo->getResults();//表示の実行
+$results = $todo->getResults(); //表示の実行
 
 
 
@@ -43,11 +43,21 @@ $results = $todo->getResults();//表示の実行
       color: #ccc;
       cursor: pointer;
     }
+
+
   </style>
 </head>
 
 <body>
-  <h1>php練習</h1>
+  <header>
+    <h1>php練習</h1>
+    
+  </header>
+
+  <form action="?action=deleteAll" method="post">
+      <span class="deleteAll">全削除</span>
+      <input type="hidden" name="token" value="<?= Utils::h($_SESSION['token']); ?>">
+    </form>
 
   <form action="?action=add" method="post">
     <input type="text" name="title" placeholder="Type new todo.">
@@ -92,15 +102,28 @@ $results = $todo->getResults();//表示の実行
     }
 
 
-  const deletes = document.querySelectorAll('.delete');
-  deletes.forEach(span => {
-    span.addEventListener('click', () => {
-      if(!confirm('本当に消す？')){
-        return;
-      }
-      span.parentNode.submit();
+    const deletes = document.querySelectorAll('.delete');
+    deletes.forEach(span => {
+      span.addEventListener('click', () => {
+        if (!confirm('本当に消す？')) {
+          return;
+        }
+        span.parentNode.submit();
+      });
     });
-  });
+
+
+    const deleteAll = document.querySelector('.deleteAll');
+    deleteAll.addEventListener('click', () => {
+        if (!confirm('本当に全部消す？')) {
+          return;
+        }
+        deleteAll.parentNode.submit();
+      });
+
+
+
+
 
   </script>
 </body>
