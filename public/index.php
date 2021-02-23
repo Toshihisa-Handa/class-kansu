@@ -2,12 +2,12 @@
 include(__DIR__ . '/../app/config.php');
 
 //db
-$pdo = dbcon();
+$pdo = Database::dbcon();
 
 
 
 //トークン生成
-createToken();
+Token::create();
 
 
 
@@ -15,7 +15,7 @@ createToken();
 
 //登録の実行（ポストがあった際実行される）
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  validateToken();
+  Token::validate();
   $action = filter_input(INPUT_GET, 'action');
 
   switch ($action) {

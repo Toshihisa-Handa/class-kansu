@@ -2,24 +2,6 @@
 
 
 
-//CSRF対策============================
-function createToken()
-{
-  if (!isset($_SESSION['token'])) {
-    $_SESSION['token'] = bin2hex(random_bytes(32));
-  }
-}
-
-function validateToken()
-{
-  if (
-    empty($_SESSION['token']) ||
-    $_SESSION['token'] !== filter_input(INPUT_POST, 'token')
-  ) {
-    exit('Invalid post request');
-  }
-}
-//=====================================
 
 //登録処理
 function addTodo($pdo)
@@ -29,7 +11,7 @@ function addTodo($pdo)
     return;
   }
   $stmt = $pdo->prepare("INSERT INTO todos (title) VALUES (:title)");
-  $stmt->bindValue('title', $title, PDO::PARAM_STR);
+  $stmt->bindValue('title', Utils::h($title), PDO::PARAM_STR);
   $stmt->execute();
 }
 
