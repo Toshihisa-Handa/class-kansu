@@ -6,38 +6,13 @@ $pdo = Database::dbcon();
 
 
 
-//トークン生成
-Token::create();
+$todo = new  Todo($pdo);
+$todo->processPost();
+$results = $todo->getResults();//表示の実行
 
 
 
 
-
-//登録の実行（ポストがあった際実行される）
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  Token::validate();
-  $action = filter_input(INPUT_GET, 'action');
-
-  switch ($action) {
-    case 'add':
-      addTodo($pdo);
-      break;
-    case 'toggle':
-      toggleTodo($pdo);
-      break;
-      case 'delete':
-        deleteTodo($pdo);
-      break;
-      default:
-      exit;
-  }
-
-  header('Location: index.php');
-  exit;
-}
-
-//表示の実行
-$results = getResults($pdo);
 
 
 ?>
@@ -98,9 +73,6 @@ $results = getResults($pdo);
       </li>
     <?php endforeach; ?>
   </ul>
-
-
-
 
 
 
