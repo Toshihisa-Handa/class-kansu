@@ -1,6 +1,5 @@
 <?php
 include(__DIR__ . '/../app/config.php');
-require_once(__DIR__ . '/../app/func.php');
 
 //db
 $pdo = dbcon();
@@ -72,7 +71,7 @@ $results = getResults($pdo);
 
   <form action="?action=add" method="post">
     <input type="text" name="title" placeholder="Type new todo.">
-    <input type="hidden" name='token' value='<?= h($_SESSION['token']) ?>'>
+    <input type="hidden" name='token' value='<?= Utils::h($_SESSION['token']) ?>'>
 
   </form>
   <ul>
@@ -80,8 +79,8 @@ $results = getResults($pdo);
       <li>
         <form action="?action=toggle" method='post'>
           <input type="checkbox" <?= $result['is_done']  ? 'checked' : ''; ?>>
-          <input type="hidden" name="id" value="<?= h($result['id']); ?>">
-          <input type="hidden" name="token" value="<?= h($_SESSION['token']); ?>">
+          <input type="hidden" name="id" value="<?= Utils::h($result['id']); ?>">
+          <input type="hidden" name="token" value="<?= Utils::h($_SESSION['token']); ?>">
         </form>
         <span>
           <span class="<?= $result['is_done'] ? 'done' : ''; ?>">
@@ -90,8 +89,8 @@ $results = getResults($pdo);
 
           <form action="?action=delete" method="post">
             <span class="delete">x</span>
-            <input type="hidden" name="id" value="<?= h($result['id']); ?>">
-            <input type="hidden" name="token" value="<?= h($_SESSION['token']); ?>">
+            <input type="hidden" name="id" value="<?= Utils::h($result['id']); ?>">
+            <input type="hidden" name="token" value="<?= Utils::h($_SESSION['token']); ?>">
           </form>
 
 

@@ -11,3 +11,5 @@ function dbcon(){
     }
     return $pdo;
 }
+include(__DIR__. '/Utils.php');
+include(__DIR__. '/func.php');

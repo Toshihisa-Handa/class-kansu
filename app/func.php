@@ -1,10 +1,6 @@
 <?php
 
-//特殊文字対策
-function h($str)
-{
-    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
-}
+
 
 //CSRF対策============================
 function createToken()
